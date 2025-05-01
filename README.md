@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 Student Info Management System (Next.js)
 
-## Getting Started
+A simple Next.js app to view, add, edit, delete, and search student records.
 
-First, run the development server:
+## 🚀 Features
+
+- List all students
+- View student details
+- Add new students
+- Edit existing students
+- Delete students
+- Search by name, major, or GPA
+
+## 📦 Tech Stack
+
+- Next.js (App Router)
+- TypeScript
+- In-memory data (for demo)
+- API Routes
+
+## ▶️ Getting Started
 
 ```bash
+git clone https://github.com/your-username/student-management-nextjs.git
+cd student-management-nextjs
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+📌 API Endpoints
+GET /api/students — All students (supports ?query=)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+GET /api/students/[id] — Single student
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+POST /api/students — Add student
 
-## Learn More
+PUT /api/students/[id] — Update student
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+DELETE /api/students/[id] — Delete student
