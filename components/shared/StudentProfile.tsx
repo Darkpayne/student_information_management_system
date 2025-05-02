@@ -15,10 +15,10 @@ export default function StudentProfile({ student }: { student: Student }) {
       borderWidth="1px"
       borderRadius="lg"
       boxShadow="md"
-      w="lg"
+      w={{ base: "full", md: "lg" }}
       mx="auto"
     >
-       <HeaderWithBackButton text="Student Profile"/>
+      <HeaderWithBackButton text="Student Profile" />
       <Stack gap={4}>
         <Flex justify="space-between">
           <Text fontWeight="medium" color="gray.600">

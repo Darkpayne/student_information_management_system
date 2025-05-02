@@ -77,7 +77,9 @@ export default function NavBar() {
           {open ? <MdClose /> : <MdMenu />}{" "}
         </IconButton>
         <HStack alignItems="center">
-          <Box fontWeight="bold">🎓 Student Manager</Box>
+          <Box fontWeight="bold" display={{ base: "none", md: "block" }}>
+            🎓 Student Manager
+          </Box>
           <HStack as="nav" display={{ base: "none", md: "flex" }}>
             {Links.map((link) => (
               <NavLink key={link.label} {...link} />
