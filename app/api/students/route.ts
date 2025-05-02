@@ -40,8 +40,8 @@ export async function POST(request: Request) {
     }
 
     const newStudent = {
-        id: (students.length + 1).toString(),
-        ...body
+      id: `student-${Date.now()}`,
+      ...body,
     };
     students.push(newStudent);
     return Response.json(students, { status: 201 });
