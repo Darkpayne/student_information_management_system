@@ -1,17 +1,25 @@
 import StudentForm from "@/components/shared/Form";
-import { STUDENT_API_URL } from "@/lib/constants";
+import { fetchSingleStudent } from "@/services/student_service";
 import { Container } from "@chakra-ui/react";
+import { notFound } from "next/navigation";
+import React from "react";
 
 export default async function EditStudentPage({
   params,
-}: Readonly<{
-  params: {
-    student_id: string;
-  };
-}>) {
-  const res = await fetch(STUDENT_API_URL + `/${params.student_id}`);
-  const student = await res.json();
-  console.log(student);
+}: {
+  params: { student_id: string };
+}) {
+  let student = null;
+
+  try {
+    student = await fetchSingleStudent(params.student_id);
+  } catch (error) {
+    console.error("Failed to fetch student:", error);
+    return notFound();
+  }
+
+  if (!student) return notFound();
+
   return (
     <Container maxW="container.md" py={6}>
       <StudentForm initialData={student} />

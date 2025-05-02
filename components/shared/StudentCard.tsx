@@ -16,9 +16,10 @@ import { Student } from "@/types/student";
 type Props = {
     student: Student;
     onDelete: (id: string) => void;
+    isDeleting: boolean
 };
 
-export default function StudentCard({ student, onDelete }: Props) {
+export default function StudentCard({ student, onDelete, isDeleting }: Props) {
     const router = useRouter();
 
     return (
@@ -47,7 +48,7 @@ export default function StudentCard({ student, onDelete }: Props) {
                         Edit
                     </Button>
 
-                    <ConfirmationDialog onDelete={() => onDelete(student.id!)} />
+                    <ConfirmationDialog onDelete={() => onDelete(student.id!)} isDeleting={isDeleting} />
                 </Flex>
             </Stack>
 

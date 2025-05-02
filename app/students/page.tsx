@@ -1,94 +1,117 @@
 'use client'
-import { FilterInput } from '@/components/shared/FilterInput';
-import StudentCard from '@/components/shared/StudentCard';
-import { toaster } from '@/components/ui/toaster';
-import { STUDENT_API_URL } from '@/lib/constants';
-import { Student } from '@/types/student';
-import { Box, Button, Container, Flex, Heading, HStack, SimpleGrid, Text } from '@chakra-ui/react';
-import React from 'react'
+import { EmptyStateComponent } from "@/components/fallback/EmptyState";
+import { FilterEmptyState } from "@/components/fallback/FilterEmptyState";
+import { FilterInput } from "@/components/shared/FilterInput";
+import { LoadingState } from "@/components/shared/Loaders";
+import StudentCard from "@/components/shared/StudentCard";
+import { toaster } from "@/components/ui/toaster";
+import { deleteStudent, fetchStudents } from "@/services/student_service";
+import { Student } from "@/types/student";
+import { Container, Flex, Heading, SimpleGrid, Stack } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 const StudentPage = () => {
+  const router = useRouter();
+
   const [query, setQuery] = React.useState("");
+  const [invalidQuery, setInvalidQuery] = React.useState("");
   const [students, setStudents] = React.useState<Student[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
-  // Common fetch function
-  const fetchStudents = async (searchQuery?: string) => {
+  const fetchAndSetStudents = async (query?: string) => {
+    setLoading(true);
     try {
-      const url = searchQuery
-        ? `/api/students?query=${encodeURIComponent(searchQuery)}`
-        : `/api/students`;
-
-      const res = await fetch(url);
-      const data = await res.json();
+      const data = await fetchStudents(query);
+      setInvalidQuery(query ?? "");
       setStudents(data);
     } catch (error) {
-      console.error("Failed to fetch students:", error);
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Fetch all on initial load
   React.useEffect(() => {
-    fetchStudents();
+    fetchAndSetStudents();
   }, []);
 
   // Handle search button
   const handleSearch = () => {
-    fetchStudents(query.trim());
+    fetchAndSetStudents(query.trim());
   };
+
   // Handle clear button
-  const handleClear = () => {
-    fetchStudents('');
+  const handleClearSearch = () => {
+    fetchAndSetStudents("");
+    setInvalidQuery("");
   };
-
-
 
   const handleDelete = async (id: string) => {
+    setIsDeleting(true);
     try {
-      const res = await fetch(STUDENT_API_URL + `/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!res.ok) {
-        toaster.create({
-          description: "StuSomething went wrong",
-          type: "error",
-        });
-      }
-
-      setStudents((prev) => prev.filter((student) => student.id !== id));
-      toaster.create({
-        description: "User deleted successfully",
-        type: "success",
-      });
-
+      await deleteStudent(id);
+      setStudents((prev) => prev.filter((s) => s.id !== id));
+      toaster.create({ description: "Student deleted", type: "success" });
     } catch (error) {
-      console.error(error);
+      toaster.create({ description: "Error deleting student", type: "error" });
+    } finally {
+      setIsDeleting(false);
     }
   };
+
   return (
     <Container maxW="container.md" py={6}>
-      <Flex justify="space-between" alignItems={'center'} mb={6}>
-
-
-        <Heading flex={1} size="2xl" w={'full'} textAlign="left" color={'white'}>
+      <Flex
+        justify="space-between"
+        flexDir={{ base: "column", md: "row" }}
+        alignItems={"center"}
+        mb={6}
+      >
+        <Heading
+          flex={1}
+          size="2xl"
+          w={"full"}
+          mb={{ base: 2, md: 0 }}
+          textAlign={{ base: "center", md: "left" }}
+          color={"white"}
+        >
           All Students
         </Heading>
-
-
-        <FilterInput handleSearch={handleSearch} handleClear={handleClear} query={query} setQuery={setQuery} />
-
+        <FilterInput
+          handleSearch={handleSearch}
+          handleClear={handleClearSearch}
+          query={query}
+          setQuery={setQuery}
+        />
       </Flex>
-      <SimpleGrid columns={{ base: 1, sm: 1, md: 2, lg: 3 }} gap={4}>
-        {students.map((student) => (
-          <StudentCard
-            key={student.id}
-            student={student}
-            onDelete={() => handleDelete(student.id!)}
-          />
-        ))}
-      </SimpleGrid>
+      {loading ? (
+        <Flex p={4} justify={"center"} alignItems={"center"}>
+          <LoadingState />
+        </Flex>
+      ) : (
+        <Stack>
+          {students.length > 0 ? (
+            <SimpleGrid columns={{ base: 1, sm: 1, md: 2, lg: 3 }} gap={4}>
+              {students.map((student) => (
+                <StudentCard
+                  key={student.id}
+                  student={student}
+                  onDelete={() => handleDelete(student.id!)}
+                  isDeleting={isDeleting}
+                />
+              ))}
+            </SimpleGrid>
+          ) : invalidQuery ? (
+            <FilterEmptyState text={invalidQuery} />
+          ) : (
+            <EmptyStateComponent action={() => router.push("/students/new")} />
+          )}
+        </Stack>
+      )}
     </Container>
-  )
-}
+  );
+};
 
 export default StudentPage;

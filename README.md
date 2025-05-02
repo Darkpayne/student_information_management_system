@@ -2,6 +2,11 @@
 
 A simple Next.js app to view, add, edit, delete, and search student records.
 
+## 📦 Authentication Credentials
+email: admin@admin.com
+password: 12345
+
+
 ## 🚀 Features
 
 - List all students
@@ -36,3 +41,7 @@ POST /api/students — Add student
 PUT /api/students/[id] — Update student
 
 DELETE /api/students/[id] — Delete student
+
+POST /api/auth — Login In
+
+GET /api/auth/logout — Logout
