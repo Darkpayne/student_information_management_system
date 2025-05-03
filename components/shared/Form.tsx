@@ -1,6 +1,4 @@
 "use client";
-
-import { STUDENT_API_URL } from "@/lib/constants";
 import { Student } from "@/types/student";
 import { Box, Button, Input, Stack, Text, Field } from "@chakra-ui/react";
 import { useState } from "react";
